@@ -22,14 +22,6 @@ void UOpenDoor::BeginPlay()
 	
 }
 
-void UOpenDoor::OpenDoor() {
-	//GetOwner()->SetActorRotation(FRotator(0.f, OpenAngle, 0.f));
-	OnOpenRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor() {
-	GetOwner()->SetActorRotation(FRotator(0.f, 0.f, 0.f));
-}
 
 // Called every frame
 void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
@@ -38,16 +30,12 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 
 	// Poll the Trigger Volume
 	if (GetTotalMassOnPlate() > TriggerMass) { 
-		OpenDoor();
-		// reset door timer
-		DoorLastOpenTime = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
+	}
+	else {
+		OnClose.Broadcast();
 	}
 
-	// check if door timer has finished
-	if (GetWorld()->GetTimeSeconds() - DoorLastOpenTime > DoorCloseDelay) {
-		CloseDoor();
-	}
-	
 }
 
 float UOpenDoor::GetTotalMassOnPlate() {
